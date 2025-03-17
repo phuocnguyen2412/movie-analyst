@@ -1,4 +1,4 @@
-name,genres,type,rating,no_of_votes,meta_score,release_date,gross,bugdet,countries,url,ROI,result
+name,genres,type,rating,no_of_votes,meta_score,release_date,gross,budget,countries,url,ROI,result
 Attack on Titan,"Action Epic, Adult Animation, Anime, Shōnen, Survival, Tragedy, Action, Adventure, Animation, Drama",TV Series,9.1,591000,,2013,,,Japan,https://www.imdb.com/title/tt2560140/?ref_=sr_t_16,,Success
 Love Hurts,"Martial Arts, Action, Comedy",Movie,5.3,6800,34.0,2025,17235040.0,18000000.0,United States,https://www.imdb.com/title/tt30788842/?ref_=sr_t_55,-0.04249777777777778,Fail
 The Quick and the Dead,"Action, Drama, Romance, Thriller, Western",Movie,6.5,107000,49.0,1995,18636537.0,32000000.0,"United States, Japan",https://www.imdb.com/title/tt0114214/?ref_=sr_t_185,-0.41760821875,Success
