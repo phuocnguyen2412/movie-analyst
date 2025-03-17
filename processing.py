@@ -14,12 +14,20 @@ def convert_votes(vote):
         return int(vote)
     except:
         return np.nan
+import re
 def convert_released_day(date):
     try:
-        return date.split()[2]
+        if pd.isna(date):
+            return None
+        # Tìm tất cả số có 4 chữ số
+        years = re.findall(r"\b(\d{4})\b", date)
+        if years:
+            return int(years[-1])  # lấy năm cuối cùng nếu có nhiều năm
+        return None
     except:
         return np.nan
-def convert_gross_bugget(money):
+
+def convert_gross_budget(money):
     try:
         money = str(money).split()[0]
         if money is None or money == '':
@@ -47,9 +55,9 @@ def make_success_label(row):
     except:
         return "Unknown"
 
-movie_df["gross"] = movie_df["gross"].apply(convert_gross_bugget).astype('float')
-movie_df["bugdet"]= movie_df["bugdet"].apply(convert_gross_bugget).astype('float')
-movie_df["ROI"] = movie_df.apply(lambda x: (x["gross"] - x["bugdet"]) / x["bugdet"] if x["bugdet"] != 0 else np.nan, axis=1)
+movie_df["gross"] = movie_df["gross"].apply(convert_gross_budget).astype('float')
+movie_df["budget"]= movie_df["budget"].apply(convert_gross_budget).astype('float')
+movie_df["ROI"] = movie_df.apply(lambda x: (x["gross"] - x["budget"]) / x["budget"] if x["budget"] != 0 else np.nan, axis=1)
 
 movie_df["release_date"] = movie_df["release_date"].apply(convert_released_day).astype("str")
 
