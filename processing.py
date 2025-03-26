@@ -1,6 +1,6 @@
 import pandas as pd
 
-movie_df = pd.read_csv('movies_data.csv')
+
 import numpy as np
 def convert_votes(vote):
     try:
@@ -55,8 +55,14 @@ def make_success_label(row):
     except:
         return "Unknown"
 
+movie_df = pd.read_csv('movies_data.csv')
+
+movie_df = movie_df.drop_duplicates(subset=["name"], keep="first")
+
 movie_df["gross"] = movie_df["gross"].apply(convert_gross_budget).astype('float')
+
 movie_df["budget"]= movie_df["budget"].apply(convert_gross_budget).astype('float')
+
 movie_df["ROI"] = movie_df.apply(lambda x: (x["gross"] - x["budget"]) / x["budget"] if x["budget"] != 0 else np.nan, axis=1)
 
 movie_df["release_date"] = movie_df["release_date"].apply(convert_released_day).astype("str")
