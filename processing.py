@@ -61,7 +61,7 @@ def make_success_label(row):
     except:
         return "Unknown"
 
-movie_df = pd.read_csv('movies_data.csv')
+movie_df = pd.read_csv('raw_data.csv')
 
 # Xóa các phim trùng lặp
 movie_df = movie_df.drop_duplicates(subset=["name"], keep="first")
