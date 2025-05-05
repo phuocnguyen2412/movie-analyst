@@ -80,6 +80,6 @@ movie_df["budget"].fillna(movie_df["budget"].median(), inplace=True)
 
 
 #
-movie_df.dropna(subset=["rating", "no_of_votes", "countries"], inplace=True)
+movie_df.dropna(subset=["rating", "no_of_votes", "countries", "gross"], inplace=True)
 
 movie_df.to_csv("movies_data_processed.csv", index=False)
