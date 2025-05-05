@@ -62,7 +62,7 @@ def make_success_label(row):
         return "Unknown"
 
 movie_df = pd.read_csv('raw_data.csv')
-
+movie_df.drop(columns=["type", "release_date", "meta_score"], inplace=True)
 # Xóa các phim trùng lặp
 movie_df = movie_df.drop_duplicates(subset=["name"], keep="first")
 
@@ -70,20 +70,16 @@ movie_df["gross"] = movie_df["gross"].apply(convert_gross_budget).astype('float'
 
 movie_df["budget"]= movie_df["budget"].apply(convert_gross_budget).astype('float')
 
-# Tính ROI dựa trên gross và budget
-movie_df["ROI"] = movie_df.apply(lambda x: (x["gross"] - x["budget"]) / x["budget"] if x["budget"] != 0 else np.nan, axis=1)
-
-movie_df["release_date"] = movie_df["release_date"].apply(convert_released_day).astype("str")
+# movie_df["release_date"] = movie_df["release_date"].apply(convert_released_day).astype("str")
 
 movie_df["no_of_votes"] = movie_df["no_of_votes"].apply(convert_votes).astype('Int64')
 
-movie_df["result"] = movie_df.apply(make_success_label, axis=1)
-
 # Xử lý missing value
 movie_df["budget"].fillna(movie_df["budget"].median(), inplace=True)
-movie_df["meta_score"].fillna(movie_df["meta_score"].mean(), inplace=True)
+# movie_df["meta_score"].fillna(movie_df["meta_score"].mean(), inplace=True)
 
 
 #
-movie_df.dropna(subset=["rating", "no_of_votes", "release_date", "countries"], inplace=True)
+movie_df.dropna(subset=["rating", "no_of_votes", "countries"], inplace=True)
+
 movie_df.to_csv("movies_data_processed.csv", index=False)
