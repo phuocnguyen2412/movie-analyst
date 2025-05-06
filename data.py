@@ -44,7 +44,7 @@ def processing_data(df_train: pd.DataFrame, df_val: pd.DataFrame, fold: int):
         lambda cl: np.mean([country_encoding.get(c, 0) for c in cl])
     )
 
-    features = ['rating', 'no_of_votes', 'budget', 'genre_stat_feature', 'country_stat_feature']
+    features = ['rating', 'no_of_votes', 'budget', 'genre_stat_feature', 'country_stat_feature', "no_of_votes", 'release_date']
     target = 'log_gross'
 
     X_train = df_train[features].values

@@ -62,7 +62,7 @@ def make_success_label(row):
         return "Unknown"
 
 movie_df = pd.read_csv('raw_data.csv')
-movie_df.drop(columns=["link","release_date", "meta_score"], inplace=True)
+movie_df.drop(columns=["url","type"], inplace=True)
 # Xóa các phim trùng lặp
 movie_df = movie_df.drop_duplicates(subset=["name"], keep="first")
 

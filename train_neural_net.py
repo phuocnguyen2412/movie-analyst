@@ -18,7 +18,7 @@ from settings import BASE_DIR, DEVICE
 import pandas as pd
 
 
-data_path = os.path.join(BASE_DIR, 'movies_data_processed.csv')
+data_path = os.path.join(BASE_DIR,"dataset", 'movies_data_processed_v2.csv')
 
 df = pd.read_csv(data_path)
 df['log_gross'] = np.log1p(df['gross'])
