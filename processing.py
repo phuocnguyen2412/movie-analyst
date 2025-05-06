@@ -62,7 +62,7 @@ def make_success_label(row):
         return "Unknown"
 
 movie_df = pd.read_csv('raw_data.csv')
-movie_df.drop(columns=["type", "release_date", "meta_score"], inplace=True)
+movie_df.drop(columns=["link","release_date", "meta_score"], inplace=True)
 # Xóa các phim trùng lặp
 movie_df = movie_df.drop_duplicates(subset=["name"], keep="first")
 
@@ -70,16 +70,16 @@ movie_df["gross"] = movie_df["gross"].apply(convert_gross_budget).astype('float'
 
 movie_df["budget"]= movie_df["budget"].apply(convert_gross_budget).astype('float')
 
-# movie_df["release_date"] = movie_df["release_date"].apply(convert_released_day).astype("str")
+movie_df["release_date"] = movie_df["release_date"].apply(convert_released_day).astype("str")
 
 movie_df["no_of_votes"] = movie_df["no_of_votes"].apply(convert_votes).astype('Int64')
 
 # Xử lý missing value
 movie_df["budget"].fillna(movie_df["budget"].median(), inplace=True)
-# movie_df["meta_score"].fillna(movie_df["meta_score"].mean(), inplace=True)
+movie_df["meta_score"].fillna(movie_df["meta_score"].mean(), inplace=True)
 
 
 #
 movie_df.dropna(subset=["rating", "no_of_votes", "countries", "gross"], inplace=True)
 
-movie_df.to_csv("movies_data_processed.csv", index=False)
+movie_df.to_csv("movies_data_processed_v2.csv", index=False)
