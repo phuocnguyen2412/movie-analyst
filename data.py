@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, RobustScaler
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -44,15 +44,18 @@ def processing_data(df_train: pd.DataFrame, df_val: pd.DataFrame, fold: int):
         lambda cl: np.mean([country_encoding.get(c, 0) for c in cl])
     )
 
-    features = ['rating', 'no_of_votes', 'budget', 'genre_stat_feature', 'country_stat_feature', "no_of_votes", 'release_date']
+    #features = ['meta_score', 'rating', 'no_of_votes', 'budget', 'genre_stat_feature', 'country_stat_feature', "no_of_votes", 'release_date']
+    features = ['rating', 'no_of_votes', 'budget', 'genre_stat_feature', 'country_stat_feature', "no_of_votes"]
+
     target = 'log_gross'
 
     X_train = df_train[features].values
     y_train = df_train[target].values
+
     X_val = df_val[features].values
     y_val = df_val[target].values
 
-    scaler = StandardScaler()
+    scaler = RobustScaler()
     X_train = scaler.fit_transform(X_train)
     X_val = scaler.transform(X_val)
 

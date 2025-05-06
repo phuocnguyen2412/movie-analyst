@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from data import processing_data
+from evatuation import visualize_results
 from settings import BASE_DIR, DEVICE
 import pandas as pd
 
@@ -121,8 +122,20 @@ for fold, (train_idx, val_idx) in enumerate(skf.split(df, df['log_gross_bin'])):
     plt.tight_layout()
     plt.show()
 
-    print(f"Validation MAE: {mae:.2f}")
-    print(f"Validation MSE: {mse:.2f}")
-    print(f"Validation R² : {r2:.4f}")
+
+    model.eval()
+    with torch.no_grad():
+
+
+        test_predictions = model(X_val_tensor.to(DEVICE))
+        test_predictions = test_predictions.cpu().numpy().flatten()
+        y_test = y_val_tensor.cpu().numpy().flatten()
+
+        train_predictions = model(X_train_tensor.to(DEVICE))
+        train_predictions = train_predictions.cpu().numpy().flatten()
+        y_train = y_train_tensor.cpu().numpy().flatten()
+
+
+        visualize_results(y_train, train_predictions, y_test, test_predictions, is_logged=True)
 
 
