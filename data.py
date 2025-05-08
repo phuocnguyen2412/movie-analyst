@@ -1,4 +1,5 @@
 import os
+import joblib
 
 import numpy as np
 import pandas as pd
@@ -34,7 +35,7 @@ def _apply_target_encoding(df, column_lists, encoding_map, new_column):
         lambda lst: np.mean([encoding_map.get(item, 0) for item in lst])
     )
 
-def processing_data(df_train: pd.DataFrame, df_val: pd.DataFrame, fold: int, features, target):
+def processing_data(df_train: pd.DataFrame, df_val: pd.DataFrame, fold: int, features, target, output_dir: str):
     # Tách các trường genres và countries
     for col in ['genres', 'countries']:
         df_train[f'{col}_list'] = _split_column(df_train, col)
@@ -62,6 +63,14 @@ def processing_data(df_train: pd.DataFrame, df_val: pd.DataFrame, fold: int, fea
     y_train = df_train[target].values
     y_val = df_val[target].values
 
+    # Tạo thư mục nếu chưa tồn tại
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Lưu scaler
+    scaler_path = os.path.join(output_dir, "scaler.pkl")
+    joblib.dump(scaler, scaler_path)
+    print(f"✅ Scaler saved to: {scaler_path}")
+
     # Biểu đồ phân phối target
     plt.figure(figsize=(20, 10))
     for i, (df, label, color) in enumerate(zip([df_train, df_val], ['y_train', 'y_val'], ['blue', 'orange'])):
@@ -73,4 +82,3 @@ def processing_data(df_train: pd.DataFrame, df_val: pd.DataFrame, fold: int, fea
         plt.legend()
 
     return X_train, y_train, X_val, y_val
-
