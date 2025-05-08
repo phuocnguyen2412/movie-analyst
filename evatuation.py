@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.metrics import r2_score, mean_squared_error, mean_squared_log_error, mean_absolute_percentage_error
+from sklearn.metrics import r2_score, mean_squared_error, mean_squared_log_error, mean_absolute_percentage_error,mean_absolute_error
 import pandas as pd
 
 
@@ -12,20 +12,22 @@ def _calculate_metrics(y_true, y_pred, title, is_logged):
     r2 = r2_score(y_true, y_pred)
     mse = mean_squared_error(y_true, y_pred)
     msle = mean_squared_log_error(y_true, y_pred)
+    mae = mean_absolute_error(y_true, y_pred)
     mape = mean_absolute_percentage_error(y_true, y_pred)
     print(title)
     print(f"R2 score: {r2:,.4f}")
     print(f"MSE: {mse:,.4f}")
     print(f"MLSE: {msle:,.4f}")
     print(f"MAPE: {mape:,.2f}%")
+    print(f"MAE: {mae:,.4f}")
 
-    return r2, mse, msle, mape
+    return r2, mse, msle, mae, mape
 
 def visualize_results(y_train, train_predictions, y_test, test_predictions,model= None, df: pd.DataFrame= None, is_logged = False):
-    train_r2, train_mse, train_msle, train_mape = _calculate_metrics(
+    train_r2, train_mse, train_msle, train_mae, train_mape = _calculate_metrics(
         y_train, train_predictions, title="Training Metrics", is_logged=is_logged
     )
-    test_r2, test_mse, test_msle, test_mape = _calculate_metrics(y_test, test_predictions, title="Test Metrics", is_logged=is_logged)
+    test_r2, test_mse, test_msle, test_mae, test_mape = _calculate_metrics(y_test, test_predictions, title="Test Metrics", is_logged=is_logged    )
 
 
 
@@ -51,5 +53,9 @@ def visualize_results(y_train, train_predictions, y_test, test_predictions,model
         plt.title("Variable Importance")
         plt.tight_layout()
         plt.show()
-    return train_r2, train_mse, train_msle, train_mape, test_r2, test_mse, test_msle, test_mape
+    
+    return (
+        train_r2, train_mse, train_msle, train_mae, train_mape,
+        test_r2, test_mse, test_msle, test_mae, test_mape
+    )
 

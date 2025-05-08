@@ -52,9 +52,9 @@ def processing_data(df_train: pd.DataFrame, df_val: pd.DataFrame, fold: int):
 
 
     # Chọn đặc trưng đầu vào và mục tiêu
-    #features = ['meta_score', 'rating', 'no_of_votes', 'budget', 'genre_stat_feature', 'country_stat_feature', 'release_date']
-    features = ['log_no_of_votes', 'log_budget',
-                'genre_stat_feature']
+    features = ['meta_score', 'rating', 'no_of_votes', 'budget', 'genre_stat_feature', 'country_stat_feature', '']
+    # features = ['log_no_of_votes', 'log_budget',
+    #             'genre_stat_feature']
 
     target = 'log_gross'
 
