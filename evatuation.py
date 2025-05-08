@@ -39,7 +39,7 @@ def visualize_results(y_train, train_predictions, y_test, test_predictions,model
     plt.legend()
     plt.show()
 
-    if model and df:
+    if model is not None and df is not None and not df.empty:
         feature_importance = model.feature_importances_
         sorted_idx = np.argsort(feature_importance)
         pos = np.arange(sorted_idx.shape[0]) + 0.5
@@ -51,4 +51,5 @@ def visualize_results(y_train, train_predictions, y_test, test_predictions,model
         plt.title("Variable Importance")
         plt.tight_layout()
         plt.show()
+    return train_r2, train_mse, train_msle, train_mape, test_r2, test_mse, test_msle, test_mape
 

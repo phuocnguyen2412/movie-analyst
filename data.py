@@ -1,8 +1,13 @@
+import os
+
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, RobustScaler
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+from settings import BASE_DIR
+
 
 def _compute_target_encoding(column_lists, gross, smoothing=10):
     value_sums = {}
@@ -21,60 +26,56 @@ def _compute_target_encoding(column_lists, gross, smoothing=10):
         encoding[item] = (mean * count + global_mean * smoothing) / (count + smoothing)
     return encoding
 
-def processing_data(df_train: pd.DataFrame, df_val: pd.DataFrame, fold: int):
-    df_train['genres_list'] = df_train['genres'].apply(lambda x: [g.strip() for g in x.split(',')])
-    df_train['countries_list'] = df_train['countries'].apply(lambda x: [c.strip() for c in x.split(',')])
-    df_val['genres_list'] = df_val['genres'].apply(lambda x: [g.strip() for g in x.split(',')])
-    df_val['countries_list'] = df_val['countries'].apply(lambda x: [c.strip() for c in x.split(',')])
+def _split_column(df, column):
+    return df[column].apply(lambda x: [item.strip() for item in x.split(',')])
 
+def _apply_target_encoding(df, column_lists, encoding_map, new_column):
+    df[new_column] = column_lists.apply(
+        lambda lst: np.mean([encoding_map.get(item, 0) for item in lst])
+    )
+
+def processing_data(df_train: pd.DataFrame, df_val: pd.DataFrame, fold: int):
+    # Tách các trường genres và countries
+    for col in ['genres', 'countries']:
+        df_train[f'{col}_list'] = _split_column(df_train, col)
+        df_val[f'{col}_list'] = _split_column(df_val, col)
+
+    # Ánh xạ encoding theo target
     genre_encoding = _compute_target_encoding(df_train['genres_list'], df_train['gross'])
     country_encoding = _compute_target_encoding(df_train['countries_list'], df_train['gross'])
 
-    df_train['genre_stat_feature'] = df_train['genres_list'].apply(
-        lambda gl: np.mean([genre_encoding.get(g, 0) for g in gl])
-    )
-    df_train['country_stat_feature'] = df_train['countries_list'].apply(
-        lambda cl: np.mean([country_encoding.get(c, 0) for c in cl])
-    )
+    # Tạo đặc trưng thống kê từ encoding
+    _apply_target_encoding(df_train, df_train['genres_list'], genre_encoding, 'genre_stat_feature')
+    _apply_target_encoding(df_train, df_train['countries_list'], country_encoding, 'country_stat_feature')
+    _apply_target_encoding(df_val, df_val['genres_list'], genre_encoding, 'genre_stat_feature')
+    _apply_target_encoding(df_val, df_val['countries_list'], country_encoding, 'country_stat_feature')
 
-    df_val['genre_stat_feature'] = df_val['genres_list'].apply(
-        lambda gl: np.mean([genre_encoding.get(g, 0) for g in gl])
-    )
-    df_val['country_stat_feature'] = df_val['countries_list'].apply(
-        lambda cl: np.mean([country_encoding.get(c, 0) for c in cl])
-    )
 
-    #features = ['meta_score', 'rating', 'no_of_votes', 'budget', 'genre_stat_feature', 'country_stat_feature', "no_of_votes", 'release_date']
-    features = ['rating', 'no_of_votes', 'budget', 'genre_stat_feature', 'country_stat_feature', "no_of_votes"]
+    # Chọn đặc trưng đầu vào và mục tiêu
+    #features = ['meta_score', 'rating', 'no_of_votes', 'budget', 'genre_stat_feature', 'country_stat_feature', 'release_date']
+    features = ['log_no_of_votes', 'log_budget',
+                'genre_stat_feature']
 
     target = 'log_gross'
 
-    X_train = df_train[features].values
-    y_train = df_train[target].values
 
-    X_val = df_val[features].values
+    # Chuẩn hóa dữ liệu
+    scaler = RobustScaler()
+    X_train = scaler.fit_transform(df_train[features].values)
+    X_val = scaler.transform(df_val[features].values)
+
+    y_train = df_train[target].values
     y_val = df_val[target].values
 
-    scaler = RobustScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_val = scaler.transform(X_val)
-
-
-
-    # Phân phối của y_train
-    plt.subplot(1, 2, 1)
-    sns.histplot(df_train["gross"], kde=True, color='blue', label='y_train', bins=10)
-    plt.title(f"Phân phối của y_train (thang gốc) - Fold {fold + 1}")
-    plt.xlabel('Gross')
-    plt.ylabel('Tần suất')
-    plt.legend()
-
-    # Phân phối của y_val
-    plt.subplot(1, 2, 2)
-    sns.histplot(df_val["gross"], kde=True, color='orange', label='y_val', bins=10)
-    plt.title(f"Phân phối của y_val (thang gốc) - Fold {fold + 1}")
-    plt.xlabel('Gross')
-    plt.ylabel('Tần suất')
-    plt.legend()
+    # Biểu đồ phân phối target
+    plt.figure(figsize=(30, 10))
+    for i, (df, label, color) in enumerate(zip([df_train, df_val], ['y_train', 'y_val'], ['blue', 'orange'])):
+        plt.subplot(1, 2, i+1)
+        sns.histplot(df["log_gross"], kde=True, color=color, label=label, bins=10)
+        plt.title(f"Phân phối của {label} (thang gốc) - Fold {fold + 1}")
+        plt.xlabel('Log Gross')
+        plt.ylabel('Tần suất')
+        plt.legend()
 
     return X_train, y_train, X_val, y_val
+
