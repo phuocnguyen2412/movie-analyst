@@ -33,6 +33,10 @@ PATIENCE = 150
 BEST_MODEL_DIR = os.path.join(BASE_DIR, "best_models")
 os.makedirs(BEST_MODEL_DIR, exist_ok=True)
 
+
+all_fold_r2 = []
+all_fold_mape = []
+
 for fold, (train_idx, val_idx) in enumerate(skf.split(df, df['log_gross_bin'])):
     print(f"Fold {fold + 1}")
 
@@ -125,8 +129,6 @@ for fold, (train_idx, val_idx) in enumerate(skf.split(df, df['log_gross_bin'])):
 
     model.eval()
     with torch.no_grad():
-
-
         test_predictions = model(X_val_tensor.to(DEVICE))
         test_predictions = test_predictions.cpu().numpy().flatten()
         y_test = y_val_tensor.cpu().numpy().flatten()
@@ -136,6 +138,42 @@ for fold, (train_idx, val_idx) in enumerate(skf.split(df, df['log_gross_bin'])):
         y_train = y_train_tensor.cpu().numpy().flatten()
 
 
-        visualize_results(y_train, train_predictions, y_test, test_predictions, is_logged=True)
+        _, _, _, _, test_r2, test_mse, test_msle, test_mape = visualize_results(y_train, train_predictions, y_test, test_predictions, is_logged=True)
+
+        all_fold_r2.append(test_r2)
+        all_fold_mape.append(test_mape)
+
+
+avg_r2 = np.mean(all_fold_r2)
+avg_mape = np.mean(all_fold_mape)
+
+print("\n===== Cross-Validation Average Results =====")
+print(f"Avg R²: {avg_r2:.4f} (±{np.std(all_fold_r2):.4f})")
+print(f"Avg MAPE Loss: {avg_mape:.4f} (±{np.std(avg_mape):.4f})")
+
+# Optionally, plot average metrics across folds
+plt.figure(figsize=(12, 8))
+fold_indices = list(range(1, len(all_fold_mape) + 1))
+
+plt.subplot(2, 2, 1)
+plt.bar(fold_indices, all_fold_r2)
+plt.axhline(y=avg_r2, color='r', linestyle='-', label=f'Average: {avg_r2:.2f}')
+plt.xlabel('Fold')
+plt.ylabel('MSE')
+plt.title('MSE by Fold')
+plt.legend()
+
+plt.subplot(2, 2, 2)
+plt.bar(fold_indices, all_fold_mape)
+plt.axhline(y=avg_mape, color='r', linestyle='-', label=f'Average: {avg_mape:.2f}')
+plt.xlabel('Fold')
+plt.ylabel('MAE')
+plt.title('MAE by Fold')
+plt.legend()
+
+
+
+plt.tight_layout()
+plt.show()
 
 

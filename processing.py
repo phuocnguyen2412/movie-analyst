@@ -61,10 +61,13 @@ def make_success_label(row):
     except:
         return "Unknown"
 
-movie_df = pd.read_csv('raw_data.csv')
-movie_df.drop(columns=["url","type"], inplace=True)
+movie_df = pd.read_csv('dataset/raw_data.csv')
+
 # Xóa các phim trùng lặp
 movie_df = movie_df.drop_duplicates(subset=["name"], keep="first")
+
+#drop những cột không cần thiết
+movie_df.drop(columns=["url","type", "name"], inplace=True)
 
 movie_df["gross"] = movie_df["gross"].apply(convert_gross_budget).astype('float')
 
@@ -77,9 +80,13 @@ movie_df["no_of_votes"] = movie_df["no_of_votes"].apply(convert_votes).astype('I
 # Xử lý missing value
 movie_df["budget"].fillna(movie_df["budget"].median(), inplace=True)
 movie_df["meta_score"].fillna(movie_df["meta_score"].mean(), inplace=True)
-
-
-#
 movie_df.dropna(subset=["rating", "no_of_votes", "countries", "gross"], inplace=True)
 
-movie_df.to_csv("movies_data_processed_v2.csv", index=False)
+# Log-transform
+movie_df['log_budget'] = np.log1p(movie_df['budget'])
+movie_df['log_no_of_votes'] = np.log1p(movie_df['no_of_votes'])
+movie_df['log_gross'] = np.log1p(movie_df['gross'])
+movie_df['log_gross_bin'] = pd.qcut(movie_df['log_gross'], q=10, labels=False)
+#
+
+movie_df.to_csv("dataset/movies_data_processed_v3.csv", index=False)
