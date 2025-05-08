@@ -30,7 +30,7 @@ def visualize_results(y_train, train_predictions, y_test, test_predictions,model
     # Plot actual vs predicted values
     plt.figure(figsize=(12, 8))
     plt.scatter(y_train, train_predictions, color="blue", label="Train")
-    plt.scatter(y_test, test_predictions, color="red", label="Test")
+    plt.scatter(y_test, test_predictions, color="red", label="Val")
     plt.title("Actual vs Predicted Values")
     plt.xlabel("Actual Values")
     plt.ylabel("Predicted Values")
