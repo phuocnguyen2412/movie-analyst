@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from data import processing_data
-from evatuation import visualize_results
+from evaluation import visualize_results
 from settings import BASE_DIR, DEVICE
 import pandas as pd
 

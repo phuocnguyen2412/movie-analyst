@@ -34,7 +34,7 @@ def _apply_target_encoding(df, column_lists, encoding_map, new_column):
         lambda lst: np.mean([encoding_map.get(item, 0) for item in lst])
     )
 
-def processing_data(df_train: pd.DataFrame, df_val: pd.DataFrame, fold: int):
+def processing_data(df_train: pd.DataFrame, df_val: pd.DataFrame, fold: int, features, target):
     # Tách các trường genres và countries
     for col in ['genres', 'countries']:
         df_train[f'{col}_list'] = _split_column(df_train, col)
@@ -50,14 +50,9 @@ def processing_data(df_train: pd.DataFrame, df_val: pd.DataFrame, fold: int):
     _apply_target_encoding(df_val, df_val['genres_list'], genre_encoding, 'genre_stat_feature')
     _apply_target_encoding(df_val, df_val['countries_list'], country_encoding, 'country_stat_feature')
 
-
-    # Chọn đặc trưng đầu vào và mục tiêu
-    features = ['meta_score', 'rating', 'no_of_votes', 'budget', 'genre_stat_feature', 'country_stat_feature', '']
-    # features = ['log_no_of_votes', 'log_budget',
-    #             'genre_stat_feature']
-
-    target = 'log_gross'
-
+    for col in ['country_stat_feature', 'genre_stat_feature']:
+        df_val[f'log_{col}'] = np.log1p(df_val[f"{col}"])
+        df_train[f'log_{col}'] = np.log1p(df_train[f"{col}"])
 
     # Chuẩn hóa dữ liệu
     scaler = RobustScaler()
@@ -68,7 +63,7 @@ def processing_data(df_train: pd.DataFrame, df_val: pd.DataFrame, fold: int):
     y_val = df_val[target].values
 
     # Biểu đồ phân phối target
-    plt.figure(figsize=(30, 10))
+    plt.figure(figsize=(20, 10))
     for i, (df, label, color) in enumerate(zip([df_train, df_val], ['y_train', 'y_val'], ['blue', 'orange'])):
         plt.subplot(1, 2, i+1)
         sns.histplot(df["log_gross"], kde=True, color=color, label=label, bins=10)
