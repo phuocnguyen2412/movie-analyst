@@ -1,10 +1,10 @@
 
-torch
-numpy
-pandas
-matplotlib
-seaborn
-ipykernel
-jupyter
-scikit-learn
-category_encoders
+numpy~=1.26.4
+pandas~=2.2.2
+matplotlib~=3.10.0
+seaborn~=0.13.2
+scikit-learn~=1.6.1
+scipy~=1.15.2
+fonttools~=4.55.3
+statsmodels~=0.14.4
+optuna~=4.3.0
