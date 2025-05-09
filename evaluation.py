@@ -20,17 +20,17 @@ def _calculate_metrics(y_true, y_pred, title, calculate_real_target):
     return r2, mae, mape
 
 def visualize_results(y_train, train_predictions, y_test, test_predictions,model= None, df: pd.DataFrame= None, calculate_real_target = False):
-    train_r2, train_mse, train_mape = _calculate_metrics(
+    train_r2, train_mae, train_mape = _calculate_metrics(
         y_train, train_predictions, title="Training Metrics", calculate_real_target=calculate_real_target
     )
-    test_r2, test_mse, test_mape = _calculate_metrics(y_test, test_predictions, title="Test Metrics", calculate_real_target=calculate_real_target)
+    test_r2, test_mae, test_mape = _calculate_metrics(y_test, test_predictions, title="Val Metrics", calculate_real_target=calculate_real_target)
 
 
 
     # Plot actual vs predicted values
     plt.figure(figsize=(12, 8))
     plt.scatter(y_train, train_predictions, color="blue", label="Train")
-    plt.scatter(y_test, test_predictions, color="red", label="Test")
+    plt.scatter(y_test, test_predictions, color="red", label="Val")
     plt.title("Actual vs Predicted Values")
     plt.xlabel("Actual Values")
     plt.ylabel("Predicted Values")
@@ -50,5 +50,5 @@ def visualize_results(y_train, train_predictions, y_test, test_predictions,model
         plt.tight_layout()
         plt.show()
 
-    return train_r2, train_mse, train_mape, test_r2, test_mse, test_mape
+    return train_r2, train_mae, train_mape, test_r2, test_mae, test_mape
 
