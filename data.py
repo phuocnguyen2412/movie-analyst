@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from save import save_encoding_to_json
 
-from settings import BASE_DIR
+from settings import BASE_DIR, GROSS_BIN
 
 import pickle
 import json
@@ -82,7 +82,7 @@ def processing_data(df_train: pd.DataFrame, df_val: pd.DataFrame, fold: int, fea
     plt.figure(figsize=(20, 10))
     for i, (df, label, color) in enumerate(zip([df_train, df_val], ['y_train', 'y_val'], ['blue', 'orange'])):
         plt.subplot(1, 2, i+1)
-        sns.histplot(df["log_gross"], kde=True, color=color, label=label, bins=10)
+        sns.histplot(df["log_gross"], kde=True, color=color, label=label, bins=GROSS_BIN)
         plt.title(f"Phân phối của {label} (thang gốc) - Fold {fold + 1}")
         plt.xlabel('Log Gross')
         plt.ylabel('Tần suất')
