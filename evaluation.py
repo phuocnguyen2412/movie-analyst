@@ -19,15 +19,14 @@ def _calculate_metrics(y_true, y_pred, title, calculate_real_target):
 
     return r2, mae, mape
 
-def visualize_results(y_train, train_predictions, y_test, test_predictions,model= None, df: pd.DataFrame= None, calculate_real_target = False):
+def visualize_results(y_train, train_predictions, y_test, test_predictions, model=None, df: pd.DataFrame=None, calculate_real_target=False):
+    # Tính toán các chỉ số đánh giá
     train_r2, train_mae, train_mape = _calculate_metrics(
         y_train, train_predictions, title="Training Metrics", calculate_real_target=calculate_real_target
     )
     test_r2, test_mae, test_mape = _calculate_metrics(y_test, test_predictions, title="Val Metrics", calculate_real_target=calculate_real_target)
 
-
-
-    # Plot actual vs predicted values
+    # Vẽ biểu đồ Actual vs Predicted Values
     plt.figure(figsize=(12, 8))
     plt.scatter(y_train, train_predictions, color="blue", label="Train")
     plt.scatter(y_test, test_predictions, color="red", label="Val")
@@ -38,17 +37,23 @@ def visualize_results(y_train, train_predictions, y_test, test_predictions,model
     plt.show()
 
     if model is not None and df is not None and not df.empty:
-        feature_importance = model.feature_importances_
-        sorted_idx = np.argsort(feature_importance)
-        pos = np.arange(sorted_idx.shape[0])
+        if hasattr(model, "feature_importances_"):
+            # Nếu mô hình hỗ trợ 'feature_importances_'
+            feature_importance = model.feature_importances_
+            sorted_idx = np.argsort(feature_importance)
+            pos = np.arange(sorted_idx.shape[0])
 
-        plt.figure(figsize=(12, 8))
-        plt.barh(pos, feature_importance[sorted_idx], align="center")
-        plt.yticks(pos, df.columns[sorted_idx])
-        plt.xlabel("Feature Importance")
-        plt.title("Variable Importance")
-        plt.tight_layout()
-        plt.show()
+            # Vẽ biểu đồ feature importance
+            plt.figure(figsize=(12, 8))
+            plt.barh(pos, feature_importance[sorted_idx], align="center")
+            plt.yticks(pos, np.array(df.columns)[sorted_idx])
+            plt.xlabel("Feature Importance")
+            plt.title("Variable Importance")
+            plt.tight_layout()
+            plt.show()
+        else:
+            print("⚠️ Model does not support 'feature_importances_' (e.g., HistGradientBoostingRegressor). Skipping feature importance plot.")
 
     return train_r2, train_mae, train_mape, test_r2, test_mae, test_mape
+
 
