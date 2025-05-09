@@ -14,7 +14,7 @@ def save_model(model, model_name, fold, directory="saved_models"):
 def load_model(model_name, fold, directory="best_models"):
    
     model_path = os.path.join(directory, model_name, f"fold_{fold}", "model.pkl")
-    
+    print(f"Loading model from: {model_path}")
     if not os.path.exists(model_path):
         raise FileNotFoundError(f"Model file not found at: {model_path}")
     
