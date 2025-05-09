@@ -6,6 +6,7 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler, RobustScaler
 import matplotlib.pyplot as plt
 import seaborn as sns
+from save import save_encoding_to_json
 
 from settings import BASE_DIR
 
@@ -35,7 +36,9 @@ def _apply_target_encoding(df, column_lists, encoding_map, new_column):
         lambda lst: np.mean([encoding_map.get(item, 0) for item in lst])
     )
 
-def processing_data(df_train: pd.DataFrame, df_val: pd.DataFrame, fold: int, features, target, output_dir: str):
+
+def processing_data(df_train: pd.DataFrame, df_val: pd.DataFrame, fold: int, features, target,model_name,directory):
+
     # Tách các trường genres và countries
     for col in ['genres', 'countries']:
         df_train[f'{col}_list'] = _split_column(df_train, col)
@@ -44,6 +47,10 @@ def processing_data(df_train: pd.DataFrame, df_val: pd.DataFrame, fold: int, fea
     # Ánh xạ encoding theo target
     genre_encoding = _compute_target_encoding(df_train['genres_list'], df_train['gross'])
     country_encoding = _compute_target_encoding(df_train['countries_list'], df_train['gross'])
+    
+    # Lưu encoding vào file JSON
+    # save_encoding_to_json(genre_encoding, model_name=model_name, fold=fold+1, target_encoding="genre_encoded",directory=directory)
+    # save_encoding_to_json(country_encoding, model_name=model_name, fold=fold+1, target_encoding="country_encoded",directory=directory)
 
     # Tạo đặc trưng thống kê từ encoding
     _apply_target_encoding(df_train, df_train['genres_list'], genre_encoding, 'genre_stat_feature')
