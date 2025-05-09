@@ -77,8 +77,8 @@ movie_df["release_date"] = movie_df["release_date"].apply(convert_released_day).
 
 movie_df["no_of_votes"] = movie_df["no_of_votes"].apply(convert_votes).astype('Int64')
 
-lower = movie_df['gross'].quantile(0.02)
-upper = movie_df['gross'].quantile(0.98)
+lower = movie_df['gross'].quantile(0.03)
+upper = movie_df['gross'].quantile(0.97)
 
 movie_df = movie_df[(movie_df['gross'] >= lower) & (movie_df['gross'] <= upper)]
 

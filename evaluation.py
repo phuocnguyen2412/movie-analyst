@@ -6,8 +6,8 @@ import pandas as pd
 
 def _calculate_metrics(y_true, y_pred, title, calculate_real_target):
     if calculate_real_target:
-        y_true = np.expm1(y_true)
-        y_pred = np.expm1(y_pred)
+        y_true = np.expm1(np.clip(y_true, 0, 20.940975))
+        y_pred = np.expm1(np.clip(y_pred, 0, 20.940975))
 
     r2 = r2_score(y_true, y_pred)
     mae = mean_absolute_error(y_true, y_pred)

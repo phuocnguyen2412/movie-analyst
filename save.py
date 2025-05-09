@@ -23,11 +23,10 @@ def load_model(model_name, fold, directory="best_models"):
 
 
 
-def save_encoding_to_json(encoding_dict, model_name, fold, directory="best_models", target_encoding="encoded"):
+def save_encoding_to_json(encoding_dict, save_path: str, target_encoding):
 
-    model_dir = os.path.join(directory, model_name, f"fold_{fold}")
-    os.makedirs(model_dir, exist_ok=True)
-    filename = os.path.join(model_dir, f"{target_encoding}.json")
+    os.makedirs(save_path, exist_ok=True)
+    filename = os.path.join(save_path, f"{target_encoding}.json")
 
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(encoding_dict, f, ensure_ascii=False, indent=4)
