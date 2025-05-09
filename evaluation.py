@@ -33,6 +33,7 @@ def visualize_results(df: pd.DataFrame, y_true, y_pred, bin_column='log_gross_bi
         y_pred = np.expm1(np.clip(y_pred, 0, 20.732282))
 
     # Add y_true and y_pred into the DataFrame
+    df = df.copy()
     df['y_true'] = y_true
     df['y_pred'] = y_pred
 
@@ -44,8 +45,10 @@ def visualize_results(df: pd.DataFrame, y_true, y_pred, bin_column='log_gross_bi
             'Bin': bin_value,
             'R2': r2,
             'MAE': mae,
-            'MAPE': mape * 100  # Convert to percentage
+            'MAPE': mape * 100,
+            'Count': len(group)
         })
+
 
     # Convert results to DataFrame
     bin_metrics_df = pd.DataFrame(bin_results)
@@ -93,4 +96,4 @@ def visualize_results(df: pd.DataFrame, y_true, y_pred, bin_column='log_gross_bi
             plt.show()
 
     # Return the metrics DataFrame
-    return bin_metrics_df
+    return bin_metrics_df, overall_r2, overall_mae, overall_mape
