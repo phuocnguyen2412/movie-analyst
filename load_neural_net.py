@@ -1,5 +1,6 @@
 import os
 import torch
+
 from NeuralNet import Net  # Import class Net từ mô hình Neural Network của bạn
 from settings import DEVICE
 

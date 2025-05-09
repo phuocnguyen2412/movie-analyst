@@ -3,7 +3,7 @@ import pandas as pd
 
 import numpy as np
 import re
-
+from settings import GROSS_BIN
 def convert_votes(vote):
     # Chuyển giá trị votes từ string có đơn vị M, K sang int
     try:
@@ -77,8 +77,8 @@ movie_df["release_date"] = movie_df["release_date"].apply(convert_released_day).
 
 movie_df["no_of_votes"] = movie_df["no_of_votes"].apply(convert_votes).astype('Int64')
 
-lower = movie_df['gross'].quantile(0.03)
-upper = movie_df['gross'].quantile(0.97)
+lower = movie_df['gross'].quantile(0.02)
+upper = movie_df['gross'].quantile(0.98)
 
 movie_df = movie_df[(movie_df['gross'] >= lower) & (movie_df['gross'] <= upper)]
 
@@ -91,7 +91,7 @@ movie_df.dropna(subset=["rating", "no_of_votes", "countries", "gross"], inplace=
 movie_df['log_budget'] = np.log1p(movie_df['budget'])
 movie_df['log_no_of_votes'] = np.log1p(movie_df['no_of_votes'])
 movie_df['log_gross'] = np.log1p(movie_df['gross'])
-movie_df['log_gross_bin'] = pd.qcut(movie_df['log_gross'], q=10, labels=False)
+movie_df['log_gross_bin'] = pd.qcut(movie_df['log_gross'], q=GROSS_BIN, labels=False)
 #
 
 movie_df.to_csv("dataset/movies_data_processed_v4.csv", index=False)
