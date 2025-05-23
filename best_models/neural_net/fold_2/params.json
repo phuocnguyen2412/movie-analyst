@@ -1,0 +1,1 @@
+{"patience": 50, "num_hidden_layers": 3, "learning_rate": 0.001, "dropout_rate": 0.3, "batch_size": 256}
